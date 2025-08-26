@@ -4,4 +4,3 @@ flask
 gunicorn
 anthropic
 requests
-sqlite3 
