@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Recruitment Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .logs-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .log-entry {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-level {
+            width: 60px;
+            text-align: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .log-info {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .email-preview {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .client-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .client-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .client-item:last-child {
+            border-bottom: none;
+        }
+
+        .add-client {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Recruitment Agent Admin</h1>
+            <div>
+                <span class="status-indicator" id="systemStatus">
+                    🔴 <span>Checking...</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid">
+            <!-- System Control Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎛️</div>
+                    <h3>System Control</h3>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        📊 Generate Report Now
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" onclick="sendEmails()">
+                        📧 Send Emails to Clients
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-warning" onclick="testEmail()">
+                        🧪 Test Email Setup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Schedule Settings Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📅</div>
+                    <h3>Schedule Settings</h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Frequency</label>
+                    <select class="form-input" id="scheduleFrequency">
+                        <option value="weekly">Weekly</option>
+                        <option value="daily">Daily</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Day</label>
+                    <select class="form-input" id="scheduleDay">
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Time</label>
+                    <input type="time" class="form-input" id="scheduleTime" value="09:00">
+                </div>
+            </div>
+
+            <!-- Claude Settings Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <h3>Claude AI Settings</h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">API Key</label>
+                    <input type="password" class="form-input" id="anthropicApiKey" placeholder="sk-ant-api...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <select class="form-input" id="claudeModel">
+                        <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                        <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+                        <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">System Prompt</label>
+                    <textarea class="form-textarea" id="systemPrompt" placeholder="Enter custom system prompt for Claude..."></textarea>
+                </div>
+            </div>
+
+            <!-- Email Settings Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📧</div>
+                    <h3>Email Configuration</h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="emailUser" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">App Password</label>
+                    <input type="password" class="form-input" id="emailPassword" placeholder="Gmail App Password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Template</label>
+                    <textarea class="form-textarea" id="emailTemplate" placeholder="Customize your email template..."></textarea>
+                </div>
+            </div>
+
+            <!-- Client Management Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <h3>Client Management</h3>
+                </div>
+                <div class="client-list" id="clientList">
+                    <div>Loading clients...</div>
+                </div>
+                <div class="add-client">
+                    <input type="email" class="form-input" id="newClientEmail" placeholder="client@company.com" style="flex: 1;">
+                    <button class="btn btn-primary" onclick="addClient()">Add</button>
+                </div>
+            </div>
+
+            <!-- System Logs Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📋</div>
+                    <h3>System Logs</h3>
+                </div>
+                <div class="logs-container" id="systemLogs">
+                    <div>Loading logs...</div>
+                </div>
+                <button class="btn btn-primary" onclick="refreshLogs()">Refresh Logs</button>
+            </div>
+        </div>
+
+        <!-- Save Settings Button -->
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn btn-primary" onclick="saveAllSettings()" style="padding: 15px 30px; font-size: 16px;">
+                💾 Save All Settings
+            </button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        let settings = {};
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/admin/settings');
+                const data = await response.json();
+                
+                if (data.success) {
+                    settings = data.settings;
+                    populateForm();
+                    document.getElementById('systemStatus').innerHTML = '🟢 <span>Online</span>';
+                    document.getElementById('systemStatus').className = 'status-indicator status-online';
+                } else {
+                    throw new Error('Failed to load settings');
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                document.getElementById('systemStatus').innerHTML = '🔴 <span>Offline</span>';
+                document.getElementById('systemStatus').className = 'status-indicator status-offline';
+                showNotification('Failed to connect to server', 'error');
+            }
+        }
+        
+        function populateForm() {
+            document.getElementById('anthropicApiKey').value = settings.anthropic_api_key || '';
+            document.getElementById('emailUser').value = settings.email_user || '';
+            document.getElementById('emailPassword').value = settings.email_password || '';
+            document.getElementById('scheduleFrequency').value = settings.schedule_frequency || 'weekly';
+            document.getElementById('scheduleDay').value = settings.schedule_day || 'tuesday';
+            document.getElementById('scheduleTime').value = settings.schedule_time || '09:00';
+            document.getElementById('claudeModel').value = settings.claude_model || 'claude-3-sonnet-20240229';
+            document.getElementById('systemPrompt').value = settings.system_prompt || '';
+            document.getElementById('emailTemplate').value = settings.email_template || '';
+            
+            updateClientList();
+        }
+        
+        function updateClientList() {
+            const clientList = document.getElementById('clientList');
+            const clients = settings.client_emails || [];
+            
+            if (clients.length === 0) {
+                clientList.innerHTML = '<div>No clients added yet</div>';
+                return;
+            }
+            
+            clientList.innerHTML = clients.map((email, index) => `
+                <div class="client-item">
+                    <span>${email}</span>
+                    <button class="btn btn-danger" onclick="removeClient(${index})" style="padding: 4px 8px; font-size: 12px;">Remove</button>
+                </div>
+            `).join('');
+        }
+        
+        function addClient() {
+            const emailInput = document.getElementById('newClientEmail');
+            const email = emailInput.value.trim();
+            
+            if (!email) return;
+            
+            if (!settings.client_emails) settings.client_emails = [];
+            
+            if (settings.client_emails.includes(email)) {
+                showNotification('Client already exists', 'error');
+                return;
+            }
+            
+            settings.client_emails.push(email);
+            emailInput.value = '';
+            updateClientList();
+            showNotification('Client added (remember to save settings)', 'success');
+        }
+        
+        function removeClient(index) {
+            settings.client_emails.splice(index, 1);
+            updateClientList();
+            showNotification('Client removed (remember to save settings)', 'success');
+        }
+        
+        async function saveAllSettings() {
+            try {
+                // Collect all form data
+                const formSettings = {
+                    anthropic_api_key: document.getElementById('anthropicApiKey').value,
+                    email_user: document.getElementById('emailUser').value,
+                    email_password: document.getElementById('emailPassword').value,
+                    schedule_frequency: document.getElementById('scheduleFrequency').value,
+                    schedule_day: document.getElementById('scheduleDay').value,
+                    schedule_time: document.getElementById('scheduleTime').value,
+                    claude_model: document.getElementById('claudeModel').value,
+                    system_prompt: document.getElementById('systemPrompt').value,
+                    email_template: document.getElementById('emailTemplate').value,
+                    client_emails: settings.client_emails || []
+                };
+                
+                const response = await fetch('/api/admin/settings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ settings: formSettings })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Settings saved successfully!', 'success');
+                    settings = formSettings;
+                } else {
+                    throw new Error(data.error || 'Failed to save settings');
+                }
+            } catch (error) {
+                showNotification('Failed to save settings: ' + error.message, 'error');
+            }
+        }
+        
+        async function generateReport() {
+            try {
+                showNotification('Generating report...', 'success');
+                const response = await fetch('/api/admin/generate-report', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Report generated successfully!', 'success');
+                    refreshLogs();
+                } else {
+                    throw new Error(data.error || 'Failed to generate report');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function sendEmails() {
+            try {
+                showNotification('Sending emails...', 'success');
+                const response = await fetch('/api/admin/send-emails', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`Emails sent to ${data.sent_count}/${data.total_clients} clients`, 'success');
+                    refreshLogs();
+                } else {
+                    throw new Error(data.error || 'Failed to send emails');
+                }
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function testEmail() {
+            try {
+                showNotification('Testing email setup...', 'success');
+                const response = await fetch('/api/admin/test-email', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Test email sent successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Test email failed');
+                }
+            } catch (error) {
+                showNotification('Test failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function refreshLogs() {
+            try {
+                const response = await fetch('/api/admin/logs?limit=50');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const logsContainer = document.getElementById('systemLogs');
+                    logsContainer.innerHTML = data.logs.map(log => `
+                        <div class="log-entry">
+                            <span class="log-level log-${log.log_level.toLowerCase()}">${log.log_level}</span>
+                            <span style="flex: 1;">${log.message}</span>
+                            <span style="font-size: 11px; opacity: 0.7;">${new Date(log.created_at).toLocaleString()}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('systemLogs').innerHTML = '<div>Failed to load logs</div>';
+            }
+        }
+        
+        // Initialize dashboard
+        window.addEventListener('load', () => {
+            loadSettings();
+            refreshLogs();
+        });
+    </script>
+</body>
+</html>
